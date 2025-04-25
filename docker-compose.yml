@@ -1,0 +1,72 @@
+
+services:
+  # Node.js Express Microservice 1 (Films)
+  films_service:
+    build:
+      context: ./Films
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=production
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    depends_on:
+      - rabbitmq
+    networks:
+      - microservices-net
+
+  # Node.js Express Microservice 2 (Gateway)
+  gateway_service:
+    build:
+      context: ./Gateway
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3000"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - microservices-net
+
+  # Node.js Express Microservice 3 (Projections)
+  projection_service:
+    build:
+      context: ./Projections
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3000"
+    environment:
+      - NODE_ENV=production
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    depends_on:
+      - rabbitmq
+    networks:
+      - microservices-net
+
+  # Laravel Microservice (Reservation)
+  reservation_service:
+    build:
+      context: ./Reservation
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=production
+      - APP_KEY=base64:your_random_key_here
+    networks:
+      - microservices-net
+
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - microservices-net
+
+networks:
+  microservices-net:
+    driver: bridge
