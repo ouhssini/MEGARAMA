@@ -23,7 +23,7 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
-const PORT = process.env.PORT || 3001;
+const PORT = 3000;
 
 
 
@@ -37,10 +37,6 @@ app.get('/films', (req, res) => {
 app.get('/planing', (req, res) => {
     weeklyPlanning(req, res);
 });
-
-// setInterval(() => {
-//     consumeFilms()
-// }, 1000);
 
 
 consumeFilms();

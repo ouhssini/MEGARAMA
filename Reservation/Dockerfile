@@ -15,15 +15,27 @@ RUN apt-get update && apt-get install -y \
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
-# Install Composer
+# Install Composer (from official Composer image)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copy application files
+# Copy only composer files first to cache dependencies
+COPY composer.json composer.lock ./
+
+# Install PHP dependencies
+RUN composer install --no-scripts --no-autoloader
+
+# Copy application source code
 COPY . /var/www/html
 
-# Set permissions
+# Regenerate autoload files
+RUN composer dump-autoload --optimize
+
+# Set permissions for Laravel
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Optionally link storage (for Laravel)
+RUN php artisan storage:link || true
 
 # Expose port 80
 EXPOSE 80

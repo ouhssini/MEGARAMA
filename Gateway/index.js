@@ -11,15 +11,15 @@ const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
-const PORT = process.env.PORT || 3010;
+const PORT = 3000;
 app.use(morgan('combined'));
 // Routes
-app.use('/films',auth, createProxyMiddleware({
-    target: 'http://localhost:3000',
+app.use('/films', createProxyMiddleware({
+    target: 'http://localhost:3001',
     changeOrigin: true
 }));
 app.use('/projections', createProxyMiddleware({
-    target: 'http://localhost:3001',
+    target: 'http://localhost:3003',
     changeOrigin: true
 }));
 app.use('/reservations', createProxyMiddleware({

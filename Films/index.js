@@ -10,7 +10,7 @@ import filmsRouter from './src/routes/films.js';
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 
 app.use('/', filmsRouter);
